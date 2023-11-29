@@ -6,24 +6,31 @@
 
 int main(void)
 {
-  int operacao;
+  int operacao = 1;
 
-  printf("Operacoes:\n");
-  printf("| Criar tabela (1)\n");
-  printf("\nOperacao: ");
-
-  scanf("%d", &operacao);
-  getchar(); //Lidando com o '\n' no fim de scanf
-
-  switch (operacao)
+  while(operacao != 0)
   {
-  case 1:
-    criar_tabela();
-    break;
-  
-  default:
-    printf("Operacao invalida.");
-    break;
+    printf("Operacoes:\n");
+    printf("| Criar tabela (1)\n");
+    printf("| Encerrar (0)\n");
+    printf("\nOperacao: ");
+
+    scanf("%d", &operacao);
+    getchar(); //Lidando com o '\n' no fim de scanf
+
+    switch (operacao)
+    {
+    case 0:
+      printf("Encerrando");
+      break;
+    case 1:
+      criar_tabela();
+      break;
+    
+    default:
+      printf("Operacao invalida.");
+      break;
+    }
   }
 
   return 0;
