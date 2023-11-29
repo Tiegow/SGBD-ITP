@@ -14,6 +14,8 @@ void criar_tabela(void)
   nome_tabela[strcspn(nome_tabela, "\n")] = 0; //Eliminando '\n' no fim da string
   strcat(nome_tabela,".txt"); //Adicionando extensão '.txt' para nomear um arquivo com o nome da tabela
 
+//PAYSANDUUUU
+
   FILE *arquivo_tabela;
   arquivo_tabela = fopen(nome_tabela,"w");
   if(arquivo_tabela == NULL)
