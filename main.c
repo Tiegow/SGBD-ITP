@@ -12,6 +12,7 @@ int main(void)
   {
     printf("Operacoes:\n");
     printf("| Criar tabela (1)\n");
+    printf("| Listar tabelas (2)\n");
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");
 
@@ -26,7 +27,9 @@ int main(void)
     case 1:
       criar_tabela();
       break;
-    
+    case 2:
+      listar_tabelas();
+      break;
     default:
       printf("Operacao invalida.");
       break;

@@ -4,6 +4,7 @@
 
 void criar_tabela(void)
 {
+//// NOMEANDO TABELA ////
   char nome_tabela[51];
   printf("\e[1;1H\e[2J"); //Move o cursor para a linha 1, coluna 1 e limpa a interface
 
@@ -12,15 +13,6 @@ void criar_tabela(void)
 
   fgets(nome_tabela, 51, stdin);
   nome_tabela[strcspn(nome_tabela, "\n")] = 0; //Eliminando '\n' no fim da string
-  strcat(nome_tabela,".txt"); //Adicionando extensão '.txt' para nomear um arquivo com o nome da tabela
-
-  FILE *arquivo_tabela;
-  arquivo_tabela = fopen(nome_tabela,"w");
-  if(arquivo_tabela == NULL)
-  {
-    printf("Erro ao abrir arquivo.");
-    return;
-  }
 
 //// CRIANDO OS CAMPOS(COLUNAS) DA TABELA ////
   int qtd_colunas;
@@ -35,11 +27,30 @@ void criar_tabela(void)
 
     if(qtd_colunas == 0)
     {
-      printf("\e[1;1H\e[2J"); //Move o cursor para a linha 1, coluna 1 e limpa a interface
-      fclose(arquivo_tabela);
-      remove(nome_tabela); //Excluindo tabela vazia
+      printf("\e[1;1H\e[2J"); 
       return; //CANCELANDO OPERAÇÃO//
     }
+  }
+//// LISTANDO NOVA TABELA CRIADA ////
+  FILE *lista_tabelas;
+  lista_tabelas = fopen("tabelas.txt","a");
+  if(lista_tabelas == NULL)
+  {
+    printf("Erro ao abrir arquivo.");
+    return;
+  }
+
+  fprintf(lista_tabelas, "%s\n", nome_tabela);
+  fclose(lista_tabelas);
+
+//// CRIANDO ARQUIVO PARA TABELA ////
+  strcat(nome_tabela,".txt"); //Adicionando extensão '.txt' para nomear um arquivo com o nome da tabela
+  FILE *arquivo_tabela;
+  arquivo_tabela = fopen(nome_tabela,"w");
+  if(arquivo_tabela == NULL)
+  {
+    printf("Erro ao abrir arquivo.");
+    return;
   }
 
   fprintf(arquivo_tabela, "0 %d\n", qtd_colunas); //Salvando no arquivo a quantidade de linhas e colunas da tabela
@@ -51,22 +62,30 @@ void criar_tabela(void)
       nome_nova_coluna[strcspn(nome_nova_coluna, "\n")] = 0; //Eliminando '\n' no fim da string
       fprintf(arquivo_tabela, "%s ", nome_nova_coluna);
     }
-  printf("\e[1;1H\e[2J"); //Move o cursor para a linha 1, coluna 1 e limpa a interface
+  printf("\e[1;1H\e[2J"); 
   printf("Tabela criada.\n");
 
   fclose(arquivo_tabela);
-//// FIM - CRIAÇÃO DE ARQUIVO TABELA ////
+//// FIM ////
+}
 
-//// LISTANDO NOVA TABELA CRIADA ////
-  FILE *lista_tabelas;
-  lista_tabelas = fopen("tabelas.txt","a");
-  if(arquivo_tabela == NULL)
+void listar_tabelas(void)
+{
+  FILE *lista = fopen("tabelas.txt","r");
+  if (lista == NULL)
   {
     printf("Erro ao abrir arquivo.");
     return;
   }
 
-  fprintf(lista_tabelas, "%s\n", nome_tabela);
-  fclose(lista_tabelas);
-//// FIM ////
+  printf("\e[1;1H\e[2J");
+  printf("Tabelas criadas:\n");
+  
+  char linha[51];
+  while (fgets(linha, sizeof(linha), lista) != NULL)
+  {
+    printf("%s", linha);
+  }
+  
+  fclose(lista);
 }
