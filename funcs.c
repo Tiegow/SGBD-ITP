@@ -5,7 +5,7 @@
 void criar_tabela(void)
 {
 //// NOMEANDO TABELA ////
-  char nome_tabela[51];
+  char nome_tabela[55];
   printf("\e[1;1H\e[2J"); //Move o cursor para a linha 1, coluna 1 e limpa a interface
 
   printf("==== CRIAR TABELA ====\n");
@@ -88,4 +88,76 @@ void listar_tabelas(void)
   }
   
   fclose(lista);
+}
+
+void criar_nova_linha(void)
+{
+  /// COLETANDO NOME DA TABELA E QUANTIDADE DE LINHAS ADCIONAIS ///
+  char nome_tabela[55];
+  int quant_linhas;
+
+  printf("\e[1;1H\e[2J");
+  printf("<<<< ADCIONANDO LINHA >>>>\n");
+  printf("Nome da tabela: ");
+  
+  fgets(nome_tabela, 51, stdin);
+  nome_tabela[strcspn(nome_tabela, "\n")] = 0;
+  strcat(nome_tabela, ".txt");
+
+  printf("Digite a quantidade de linhas adcionais: ");
+  scanf("%i", &quant_linhas);
+
+  /// VERIFICANDO SE TABELA EXISTE ///
+  FILE *arquivo_tabela1;
+  arquivo_tabela1 = fopen(nome_tabela, "r");
+  if(arquivo_tabela1 == NULL)
+  {
+    printf("Arquivo inexistente ou Erro ao abrir arquivo.");
+    return;
+  }
+
+  /// COLETANDO QUANTIDADE DE COLUNAS ///
+  int quant_colunas;
+  fscanf(arquivo_tabela1, "0 %i\n", &quant_colunas);
+  fclose(arquivo_tabela1);
+
+  /// ADCIONANDO INFORMAÇÕES EM UMA NOVA LINHA ///
+  FILE *arquivo_tabela2;
+  arquivo_tabela2 = fopen(nome_tabela, "a");
+  if(arquivo_tabela2 == NULL)
+  {
+    printf("Erro ao abrir arquivo.");
+  }
+
+  char info_coluna[50];
+  int chave_primaria;
+  
+  while (quant_linhas > 0)
+  {
+    fprintf(arquivo_tabela2, "\n");
+
+    for(int i = 0; i < quant_colunas; i++)
+    {
+      if(i == 0) 
+      {
+        printf("Chave primaria (coluna 1): ");
+        scanf("%i", &chave_primaria); 
+        getchar();
+        fprintf(arquivo_tabela2, "%i ", chave_primaria);
+      }
+      else
+      {
+        printf("Coluna %i: ", i+1);
+        fgets(info_coluna, 29, stdin);
+        info_coluna[strcspn(info_coluna, "\n")] = 0;
+        fprintf(arquivo_tabela2, "%s ", info_coluna);
+      } 
+    }
+
+    quant_linhas--;
+  }
+
+  fclose(arquivo_tabela2);
+
+  //FALTA ADCIONAR O ERRO QUANDO O USUÁRIO TENTA ADCIONAR UMA CHAVE PRIMÁRIA JÁ EXISTENTE EM UMA TABELA
 }

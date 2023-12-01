@@ -10,9 +10,10 @@ int main(void)
 
   while(operacao != 0)
   {
-    printf("Operacoes:\n");
+    printf("\nOperacoes:\n");
     printf("| Criar tabela (1)\n");
     printf("| Listar tabelas (2)\n");
+    printf("| Criar nova linha em uma tabela (3)\n");
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");
 
@@ -29,6 +30,9 @@ int main(void)
       break;
     case 2:
       listar_tabelas();
+      break;
+    case 3:
+      criar_nova_linha();
       break;
     default:
       printf("Operacao invalida.");
