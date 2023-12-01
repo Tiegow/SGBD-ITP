@@ -22,7 +22,7 @@ void criar_tabela(void)
 
   while(qtd_colunas <= 0)
   {
-    printf("Quantidade de colunas invalida!\nDigite uma quantidade valida de colunas ou digite 0 para cancelar a operacao:");
+    printf("Quantidade de colunas invalida!\nDigite uma quantidade valida de colunas ou digite 0 para cancelar a operacao: ");
     scanf("%d", &qtd_colunas);
 
     if(qtd_colunas == 0)
@@ -36,7 +36,7 @@ void criar_tabela(void)
   lista_tabelas = fopen("tabelas.txt","a");
   if(lista_tabelas == NULL)
   {
-    printf("Erro ao abrir arquivo.");
+    printf("Erro ao abrir arquivo.\n");
     return;
   }
 
@@ -49,7 +49,7 @@ void criar_tabela(void)
   arquivo_tabela = fopen(nome_tabela,"w");
   if(arquivo_tabela == NULL)
   {
-    printf("Erro ao abrir arquivo.");
+    printf("Erro ao abrir arquivo.\n");
     return;
   }
 
@@ -71,22 +71,30 @@ void criar_tabela(void)
 
 void listar_tabelas(void)
 {
+  printf("\e[1;1H\e[2J");
   FILE *lista = fopen("tabelas.txt","r");
   if (lista == NULL)
   {
-    printf("Erro ao abrir arquivo.");
+    printf("Nenhuma tabela encontrada.\n");
     return;
   }
-
-  printf("\e[1;1H\e[2J");
-  printf("Tabelas criadas:\n");
   
   char linha[51];
-  while (fgets(linha, sizeof(linha), lista) != NULL)
+  if(fgets(linha, 51, lista) == NULL)
   {
+    printf("Nehuma tabela encontrada.\n");
+    fclose(lista);
+    remove("tabelas.txt");
+  }else
+  {
+    printf("=== Tabelas criadas ===\n");
     printf("%s", linha);
+    while (fgets(linha, 51, lista) != NULL)
+    {
+      printf("%s", linha);
+    }
+    printf("=======================\n");
   }
-  
   fclose(lista);
 }
 
@@ -160,4 +168,56 @@ void criar_nova_linha(void)
   fclose(arquivo_tabela2);
 
   //FALTA ADCIONAR O ERRO QUANDO O USUÁRIO TENTA ADCIONAR UMA CHAVE PRIMÁRIA JÁ EXISTENTE EM UMA TABELA
+}
+
+void deletar_tabela(void)
+{
+  printf("\e[1;1H\e[2J");
+  FILE *arqivo_entrada = fopen("tabelas.txt","r"); //Abrindo arquivo da lista de tabelas
+  if (arqivo_entrada == NULL)
+  {
+    printf("Nenhuma tabela encontrada.\n");
+    return;
+  }
+  FILE *arquivo_saida = fopen("outlist.txt","w"); //Criando novo arquivo modificado (sem a tabela a ser deletada)
+  if (arquivo_saida == NULL)
+  {
+    printf("Erro ao abrir arquivo.\n");
+    return;
+  }
+
+  listar_tabelas();
+  char nome_apagar[51];
+  printf("=== DELETANDO TABELA ===\n");
+  printf("Nome da tabela: ");
+
+  fgets(nome_apagar, 51, stdin);
+
+//// APAGANDO DA LISTA DE TABELAS ////
+  char linha[51];
+  int existe_tabela = 0;
+  while (fgets(linha, 51, arqivo_entrada) != NULL)
+  {
+    if(strcmp(linha,nome_apagar) != 0)
+    {
+      fputs(linha, arquivo_saida); //*COLOQUE O QUE NÃO FOR A TABELA DELETADA NO NOVO ARQUIVO*
+    }else
+    {
+      existe_tabela = 1;
+    }
+  }
+  fclose(arqivo_entrada);
+  fclose(arquivo_saida);
+
+  remove("tabelas.txt"); //Excluindo lista original
+  rename("outlist.txt", "tabelas.txt"); //Renomeando a nova lista para o nome padrão
+
+//// APAGANDO ARQUIVO ////
+  nome_apagar[strcspn(nome_apagar, "\n")] = 0; //Eliminando '\n' no fim da string
+  strcat(nome_apagar,".txt"); //Adicionando extensão '.txt' para encontrar o arquivo
+
+  remove(nome_apagar);
+  printf("\e[1;1H\e[2J");
+  existe_tabela == 0 ? printf("Tabela nao encontrada. Encerrando operacao.\n") : printf("Tabela removida.\n");
+//// FIM ////
 }
