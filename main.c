@@ -40,6 +40,7 @@ int main(void)
       deletar_tabela();
       break;
     default:
+      printf("\e[1;1H\e[2J");
       printf("Operacao invalida.");
       break;
     }

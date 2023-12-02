@@ -2,10 +2,34 @@
 #include <stdlib.h>
 #include <string.h> 
 
+typedef struct 
+{
+    char **coluna;
+}linha_de_matriz;
+
+void reconhecer_tabela (FILE *arquivo, int qtd_linhas, int qtd_colunas, linha_de_matriz *resultante)
+{
+    for(int i = 0; i < qtd_linhas; i++)
+    {
+        resultante[i].coluna = (char **)malloc(qtd_colunas * sizeof(char*)); //Pra cada linha, alocando espaço para < qtd_colunas > campos de strings
+        for(int j = 0; j < qtd_colunas; j++) resultante[i].coluna[j] = (char *)malloc(21 * sizeof(char)); //pra cada campo (coluna), alocando espaço para 21 caracteres
+    }
+
+    for(int i = 0; i < qtd_linhas; i++)
+    {
+        for(int j = 0; j < qtd_colunas; j++)
+        {
+            fscanf(arquivo,"%20[^|]",resultante[i].coluna[j]); //Lendo os dados string de cada campo (delimitados por |)
+            fscanf(arquivo,"|"); 
+        }
+    }
+    //A função vai "retornar" a matriz resultante com os dados preenchidos
+}
+
 void criar_tabela(void)
 {
 //// NOMEANDO TABELA ////
-  char nome_tabela[55];
+  char nome_tabela[51];
   printf("\e[1;1H\e[2J"); //Move o cursor para a linha 1, coluna 1 e limpa a interface
 
   printf("==== CRIAR TABELA ====\n");
@@ -66,7 +90,7 @@ void criar_tabela(void)
   printf("Tabela criada.\n");
 
   fclose(arquivo_tabela);
-//// FIM ////
+//// FIM - CRIAR TABELA ////
 }
 
 void listar_tabelas(void)
@@ -79,8 +103,8 @@ void listar_tabelas(void)
     return;
   }
   
-  char linha[51];
-  if(fgets(linha, 51, lista) == NULL)
+  char linha[200];
+  if(fgets(linha, 200, lista) == NULL)
   {
     printf("Nehuma tabela encontrada.\n");
     fclose(lista);
@@ -89,7 +113,7 @@ void listar_tabelas(void)
   {
     printf("=== Tabelas criadas ===\n");
     printf("%s", linha);
-    while (fgets(linha, 51, lista) != NULL)
+    while (fgets(linha, 200, lista) != NULL)
     {
       printf("%s", linha);
     }
@@ -101,7 +125,7 @@ void listar_tabelas(void)
 void criar_nova_linha(void)
 {
   /// COLETANDO NOME DA TABELA E QUANTIDADE DE LINHAS ADCIONAIS ///
-  char nome_tabela[55];
+  char nome_tabela[51];
   int quant_linhas;
 
   printf("\e[1;1H\e[2J");
@@ -194,9 +218,9 @@ void deletar_tabela(void)
   fgets(nome_apagar, 51, stdin);
 
 //// APAGANDO DA LISTA DE TABELAS ////
-  char linha[51];
+  char linha[200];
   int existe_tabela = 0;
-  while (fgets(linha, 51, arqivo_entrada) != NULL)
+  while (fgets(linha, 200, arqivo_entrada) != NULL)
   {
     if(strcmp(linha,nome_apagar) != 0)
     {
@@ -219,5 +243,5 @@ void deletar_tabela(void)
   remove(nome_apagar);
   printf("\e[1;1H\e[2J");
   existe_tabela == 0 ? printf("Tabela nao encontrada. Encerrando operacao.\n") : printf("Tabela removida.\n");
-//// FIM ////
+//// FIM - DELETAR TABELA////
 }
