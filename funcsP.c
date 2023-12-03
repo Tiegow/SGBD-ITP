@@ -109,6 +109,7 @@ void criar_nova_linha(void)
   int qtd_linhas, linhas_anteriores;
 
   printf("\e[1;1H\e[2J");
+  listar_tabelas();
   printf("<<<< ADCIONANDO LINHA >>>>\n");
   printf("Nome da tabela: ");
   
@@ -203,6 +204,44 @@ void criar_nova_linha(void)
   fclose(arquivo_tabela2);
 
   atualizando_qtd_de_linhas_colunas(nome_tabela, qtd_linhas, qtd_linhas_anteriores, qtd_colunas);
+}
+
+void listar_dados_tabela(void)
+{
+  listar_tabelas();
+  char nome_tabela[51];
+  printf("Mostrar dados da tabela: ");
+  fgets(nome_tabela, 51, stdin);
+  nome_tabela[strcspn(nome_tabela, "\n")] = 0;
+  strcat(nome_tabela,".txt");
+
+  FILE *tabela = fopen(nome_tabela,"r");
+  if (tabela == NULL)
+  {
+    printf("Nenhuma tabela encontrada.\n");
+    return;
+  }
+
+  int qtd_linhas, qtd_colunas;
+  fscanf(tabela,"%d %d\n", &qtd_linhas, &qtd_colunas); //Scan da quantidade de linhas e colunas (primeira informação do arquivo)
+  qtd_linhas++;
+
+  linha_de_matriz nova_matriz[qtd_linhas]; //Declarando uma matriz com a quantidade de linhas da tabela escolhida
+  reconhecer_tabela(tabela, qtd_linhas, qtd_colunas, nova_matriz); //APLICANDO A FUNÇÃO NOVA
+
+  printf("\e[1;1H\e[2J");
+  for(int i = 0; i < qtd_linhas; i++)
+  {
+    for(int j = 0; j < qtd_colunas; j++)
+    {
+      printf("%s|", nova_matriz[i].coluna[j]);
+    }
+    printf("\n");
+  }
+  printf("\n");
+
+  free(nova_matriz); //Free quando acabar de usar a matriz
+  fclose(tabela); //Fim da operação
 }
 
 void deletar_tabela(void)

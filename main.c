@@ -14,6 +14,7 @@ int main(void)
     printf("| Criar tabela (1)\n");
     printf("| Listar tabelas (2)\n");
     printf("| Criar nova linha em uma tabela (3)\n");
+    printf("| Listar todos os dados de uma tabela (4)\n");
     printf("| Excluir uma tabela (7)\n");
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");
@@ -35,6 +36,9 @@ int main(void)
       break;
     case 3:
       criar_nova_linha();
+      break;
+    case 4:
+      listar_dados_tabela();
       break;
     case 7:
       deletar_tabela();
