@@ -54,7 +54,7 @@ int chave_primaria_existe (int chave_primaria, int qtd_linhas, int qtd_colunas, 
     return 0;
 }
 
-void atualizando_qtd_de_linhas(char nome_tabela[55], int qtd_linhas, int qtd_linhas_anteriores)
+void atualizando_qtd_de_linhas_colunas(char nome_tabela[55], int qtd_linhas, int qtd_linhas_anteriores, int qtd_colunas)
 {
   FILE *arquivo_tabela00;
   arquivo_tabela00 = fopen(nome_tabela, "r+");
@@ -63,6 +63,6 @@ void atualizando_qtd_de_linhas(char nome_tabela[55], int qtd_linhas, int qtd_lin
     printf("Erro ao abrir arquivo.");
   }
   
-  fprintf(arquivo_tabela00, "%i", qtd_linhas + qtd_linhas_anteriores);
+  fprintf(arquivo_tabela00, "%i %i\n", qtd_linhas + qtd_linhas_anteriores, qtd_colunas);
   fclose(arquivo_tabela00);
 }

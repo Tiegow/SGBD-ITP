@@ -169,7 +169,8 @@ void criar_nova_linha(void)
         /// VERIFICA SE CHAVE PRIMÁRIA JÁ EXISTE ///
         if(chave_primaria_existe(chave_primaria[j], qtd_linhas_anteriores + 1, qtd_colunas, nome_tabela))
         {
-          atualizando_qtd_de_linhas(nome_tabela, j, qtd_linhas_anteriores);
+          atualizando_qtd_de_linhas_colunas(nome_tabela, j, qtd_linhas_anteriores, qtd_colunas);
+          fclose(arquivo_tabela2);
           return;
         }
 
@@ -179,8 +180,9 @@ void criar_nova_linha(void)
           {
             if(chave_primaria[k] == chave_primaria[m+1]) 
             {
-              atualizando_qtd_de_linhas(nome_tabela, j, qtd_linhas_anteriores);
-              printf("ERRO, essa linha nao sera inserida, chave primaria foi digitada anteriormente!\n");
+              atualizando_qtd_de_linhas_colunas(nome_tabela, j, qtd_linhas_anteriores, qtd_colunas);
+              printf("ERRO, essa linha nao sera inserida, chave primaria digitada anteriormente!\n");
+              fclose(arquivo_tabela2);
               return;
             }
           }
@@ -200,7 +202,7 @@ void criar_nova_linha(void)
   }
   fclose(arquivo_tabela2);
 
-  atualizando_qtd_de_linhas(nome_tabela, qtd_linhas, qtd_linhas_anteriores);
+  atualizando_qtd_de_linhas_colunas(nome_tabela, qtd_linhas, qtd_linhas_anteriores, qtd_colunas);
 }
 
 void deletar_tabela(void)
