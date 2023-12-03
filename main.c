@@ -49,4 +49,4 @@ int main(void)
   return 0;
 }
 
-//Para rodar o código basta compilar tudo no terminal < gcc main.c funcsP.c funcsS.c -o final -g -W > e excutar o novo executável criado após isso < ./final >
+//Para rodar o código basta compilar tudo no terminal < gcc main.c funcs.c -o final -g -W > e excutar o novo executável criado após isso < ./final >
