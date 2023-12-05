@@ -211,7 +211,7 @@ void criar_nova_linha(void)
 void listar_dados_tabela(void)
 {
   listar_tabelas();
-  char nome_tabela[51];
+  char nome_tabela[55];
   printf("Mostrar dados da tabela: ");
   fgets(nome_tabela, 51, stdin);
   nome_tabela[strcspn(nome_tabela, "\n")] = 0;
@@ -223,27 +223,99 @@ void listar_dados_tabela(void)
     printf("\nNenhuma tabela encontrada.\n");
     return;
   }
+  printf("\e[1;1H\e[2J");
 
   int qtd_linhas, qtd_colunas;
-  fscanf(tabela,"%d %d\n", &qtd_linhas, &qtd_colunas); //Scan da quantidade de linhas e colunas (primeira informação do arquivo)
+  fscanf(tabela,"%d %d\n", &qtd_linhas, &qtd_colunas);
   qtd_linhas++;
 
   linha_de_matriz nova_matriz[qtd_linhas]; //Declarando uma matriz com a quantidade de linhas da tabela escolhida
-  reconhecer_tabela(tabela, qtd_linhas, qtd_colunas, nova_matriz); //APLICANDO A FUNÇÃO NOVA
+  reconhecer_tabela(tabela, qtd_linhas, qtd_colunas, nova_matriz); 
 
-  printf("\e[1;1H\e[2J");
   for(int i = 0; i < qtd_linhas; i++)
   {
     for(int j = 0; j < qtd_colunas; j++)
     {
       printf("%s|", nova_matriz[i].coluna[j]);
     }
-    printf("\n");
   }
   printf("\n");
 
   free(nova_matriz); //Free quando acabar de usar a matriz
   fclose(tabela); //Fim da operação
+}
+
+void deletar_linha_tabela(void)
+{
+  printf("\e[1;1H\e[2J");
+  listar_tabelas();
+
+  char nome_tabela_alvo[55];
+  int chave;
+  printf("=== APAGANDO REGISTRO ===\n");
+  printf("Nome da tabela: ");
+  fgets(nome_tabela_alvo, 51, stdin);
+  printf("Chave primaria: ");
+  scanf("%d", &chave);
+  
+  nome_tabela_alvo[strcspn(nome_tabela_alvo, "\n")] = 0; //Eliminando '\n' no fim da string
+  strcat(nome_tabela_alvo,".txt"); //Adicionando extensão '.txt' para encontrar o arquivo
+
+  FILE *tabela_entrada = fopen(nome_tabela_alvo,"r"); //Abrindo arquivo da tabela alvo
+  if (tabela_entrada == NULL)
+  {
+    printf("Tabela nao encontrada.\n");
+    return;
+  }
+  FILE *tabela_saida;
+
+  int qtd_linhas, qtd_colunas;
+  fscanf(tabela_entrada,"%d %d\n", &qtd_linhas, &qtd_colunas);
+  qtd_linhas++;
+
+  linha_de_matriz matriz_entrada[qtd_linhas];
+  reconhecer_tabela(tabela_entrada, qtd_linhas, qtd_colunas, matriz_entrada); 
+
+  for(int i = 0; i < qtd_linhas; i++) //Verifica se a chave primaria realmente existe para remove-la
+  {
+    if(atoi(matriz_entrada[i].coluna[0]) == chave)
+    {
+      tabela_saida = fopen("novatabela.txt","w"); //Criando nova tabela (sem a linha a ser deletada)
+      if (tabela_saida == NULL)
+      {
+        printf("Erro ao abrir arquivo.\n");
+        return;
+      }
+      fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas);
+      break;
+    }else
+    {
+      if(i == qtd_linhas-1)
+      {
+        printf("Essa linha nao existe ou nao foi encontrada.\n");
+        return;
+      }
+    }
+  }
+  //fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas);
+  for(int i = 0; i < qtd_linhas; i++)
+  {
+    for(int j = 0; j < qtd_colunas; j++)
+    {
+      if(atoi(matriz_entrada[i].coluna[0]) != chave)
+      {
+        fprintf(tabela_saida,"%s|", matriz_entrada[i].coluna[j]);
+      }
+    }
+  }
+  free(matriz_entrada);
+
+  fclose(tabela_entrada);
+  fclose(tabela_saida);
+
+  remove(nome_tabela_alvo); //Excluindo tabela original
+  rename("novatabela.txt",nome_tabela_alvo); //Renomeando a nova tabela para o nome original
+//// FIM - DELETAR LINHA////
 }
 
 void deletar_tabela(void)
@@ -263,7 +335,7 @@ void deletar_tabela(void)
   }
 
   listar_tabelas();
-  char nome_apagar[51];
+  char nome_apagar[55];
   printf("=== DELETANDO TABELA ===\n");
   printf("Nome da tabela: ");
 
