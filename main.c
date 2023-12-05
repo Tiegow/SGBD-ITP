@@ -6,7 +6,7 @@
 
 int main(void)
 {
-  int operacao = 1;
+  int operacao = 42;
 
   while(operacao != 0)
   {
@@ -19,8 +19,7 @@ int main(void)
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");
 
-    scanf("%d", &operacao);
-    getchar(); //Lidando com o '\n' no fim de scanf
+    if(reconhecer_numero_inteiro(&operacao) == 0){operacao = 42;} /// Testa se é um número inteiro
 
     switch (operacao)
     {
@@ -43,9 +42,10 @@ int main(void)
     case 7:
       deletar_tabela();
       break;
+    case 42:
+      break;
     default:
-      printf("\e[1;1H\e[2J");
-      printf("Operacao invalida.");
+      printf("\nOperacao invalida.\n");
       break;
     }
   }

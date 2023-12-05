@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
+#include <ctype.h>
 
 #include "funcs.h"
 
@@ -30,7 +31,7 @@ int chave_primaria_existe (int chave_primaria, int qtd_linhas, int qtd_colunas, 
     FILE *tabela = fopen(nome_tabela,"r");
     if (tabela == NULL)
     {
-        printf("ERRO, Nenhuma tabela encontrada.\n");
+        printf("\nERRO, Nenhuma tabela encontrada.\n");
         return 1;
     }
 
@@ -42,7 +43,7 @@ int chave_primaria_existe (int chave_primaria, int qtd_linhas, int qtd_colunas, 
         int id = atoi(matriz_tabela[i].coluna[0]); 
         if(id == chave_primaria)
         {
-            printf("ERRO, essa linha nao sera inserida, chave primaria ja existe!\n");
+            printf("\nERRO, essa linha nao sera inserida, chave primaria ja existe!\n");
             free(matriz_tabela); 
             fclose(tabela);
             return 1;
@@ -60,9 +61,33 @@ void atualizando_qtd_de_linhas_colunas(char nome_tabela[55], int qtd_linhas, int
   arquivo_tabela00 = fopen(nome_tabela, "r+");
   if(arquivo_tabela00 == NULL)
   {
-    printf("Erro ao abrir arquivo.");
+    printf("\nErro ao abrir arquivo.\n");
   }
   
   fprintf(arquivo_tabela00, "%i %i\n", qtd_linhas + qtd_linhas_anteriores, qtd_colunas);
   fclose(arquivo_tabela00);
+}
+
+int reconhecer_numero_inteiro(int* numero) 
+{
+    int limpador;
+
+    if (scanf("%i", numero) != 1) 
+    {
+        while ((limpador = getchar()) != '\n' && limpador != EOF);
+        printf("\rERRO, numero invalido, digite um numero inteiro!\n");
+        return 0;
+    }
+
+    // Verifica se há mais caracteres no buffer após a leitura do número inteiro
+    while ((limpador = getchar()) != '\n' && limpador != EOF)
+    {
+        if (!isspace(limpador)) // Verifica se não é um espaço em branco
+        { 
+            printf("\rERRO, numero invalido, digite um numero inteiro!\n");
+            return 0;
+        }
+    }
+
+    return 1;
 }

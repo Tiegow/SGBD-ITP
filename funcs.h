@@ -15,3 +15,4 @@ void deletar_tabela(void);
 void reconhecer_tabela (FILE *arquivo, int qtd_linhas, int qtd_colunas, linha_de_matriz *resultante);
 int chave_primaria_existe (int chave_primaria, int qtd_linhas, int qtd_colunas, char nome_tabela[55]);
 void atualizando_qtd_de_linhas_colunas(char nome_tabela[55], int qtd_linhas, int qtd_linhas_anteriores, int qtd_colunas);
+int reconhecer_numero_inteiro(int* numero);
