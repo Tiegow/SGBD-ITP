@@ -15,7 +15,7 @@ int main(void)
     printf("| Listar tabelas (2)\n");
     printf("| Criar nova linha em uma tabela (3)\n");
     printf("| Listar todos os dados de uma tabela (4)\n");
-    printf("| Apagar um registro (6)\n");
+    printf("| Apagar uma linha (6)\n");
     printf("| Excluir uma tabela (7)\n");
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");

@@ -25,8 +25,8 @@ void criar_tabela(void)
 
   while(qtd_colunas <= 0)
   {
-    printf("Quantidade de colunas invalida!\nDigite uma quantidade valida de colunas ou digite 0 para cancelar a operacao:");
-    scanf("%d", &qtd_colunas);
+    printf("Quantidade de colunas invalida!\nDigite uma quantidade valida de colunas ou digite 0 para cancelar a operacao: ");
+    if(reconhecer_numero_inteiro(&qtd_colunas) == 0) return; /// Testa se é um número inteiro
 
     if(qtd_colunas <= 0)
     {
@@ -90,7 +90,7 @@ void listar_tabelas(void)
     remove("tabelas.txt");
   }else
   {
-    printf("=== Tabelas criadas ===\n");
+    printf("\n=== Tabelas criadas ===\n");
     printf("%s", linha);
     while (fgets(linha, 200, lista) != NULL)
     {
@@ -121,8 +121,8 @@ void criar_nova_linha(void)
 
   while(qtd_linhas <= 0)
   {
-    printf("Quantidade de linhas invalida!\nDigite uma quantidade valida de linhas ou digite 0 para cancelar a operacao:");
-    scanf("%i", &qtd_linhas);
+    printf("Quantidade de linhas invalida!\nDigite uma quantidade valida de linhas ou digite 0 para cancelar a operacao: ");
+    if(reconhecer_numero_inteiro(&qtd_linhas) == 0) return; /// Testa se é um número inteiro
 
     if(qtd_linhas <= 0)
     {
@@ -214,6 +214,7 @@ void listar_dados_tabela(void)
   char nome_tabela[55];
   printf("Mostrar dados da tabela: ");
   fgets(nome_tabela, 51, stdin);
+  printf("\e[1;1H\e[2J");
   nome_tabela[strcspn(nome_tabela, "\n")] = 0;
   strcat(nome_tabela,".txt");
 
@@ -223,7 +224,6 @@ void listar_dados_tabela(void)
     printf("\nNenhuma tabela encontrada.\n");
     return;
   }
-  printf("\e[1;1H\e[2J");
 
   int qtd_linhas, qtd_colunas;
   fscanf(tabela,"%d %d\n", &qtd_linhas, &qtd_colunas);
@@ -232,6 +232,7 @@ void listar_dados_tabela(void)
   linha_de_matriz nova_matriz[qtd_linhas]; //Declarando uma matriz com a quantidade de linhas da tabela escolhida
   reconhecer_tabela(tabela, qtd_linhas, qtd_colunas, nova_matriz); 
 
+  printf("\n");
   for(int i = 0; i < qtd_linhas; i++)
   {
     for(int j = 0; j < qtd_colunas; j++)
@@ -256,7 +257,7 @@ void deletar_linha_tabela(void)
   printf("Nome da tabela: ");
   fgets(nome_tabela_alvo, 51, stdin);
   printf("Chave primaria: ");
-  scanf("%d", &chave);
+  if(reconhecer_numero_inteiro(&chave) == 0) return; /// Testa se é um número inteiro
   
   nome_tabela_alvo[strcspn(nome_tabela_alvo, "\n")] = 0; //Eliminando '\n' no fim da string
   strcat(nome_tabela_alvo,".txt"); //Adicionando extensão '.txt' para encontrar o arquivo
@@ -264,7 +265,7 @@ void deletar_linha_tabela(void)
   FILE *tabela_entrada = fopen(nome_tabela_alvo,"r"); //Abrindo arquivo da tabela alvo
   if (tabela_entrada == NULL)
   {
-    printf("Tabela nao encontrada.\n");
+    printf("\nTabela nao encontrada.\n");
     return;
   }
   FILE *tabela_saida;
@@ -283,7 +284,7 @@ void deletar_linha_tabela(void)
       tabela_saida = fopen("novatabela.txt","w"); //Criando nova tabela (sem a linha a ser deletada)
       if (tabela_saida == NULL)
       {
-        printf("Erro ao abrir arquivo.\n");
+        printf("\nErro ao abrir arquivo.\n");
         return;
       }
       fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas);
@@ -292,7 +293,7 @@ void deletar_linha_tabela(void)
     {
       if(i == qtd_linhas-1)
       {
-        printf("Essa linha nao existe ou nao foi encontrada.\n");
+        printf("\nEssa linha nao existe ou nao foi encontrada.\n");
         return;
       }
     }
@@ -366,6 +367,6 @@ void deletar_tabela(void)
 
   remove(nome_apagar);
   printf("\e[1;1H\e[2J");
-  existe_tabela == 0 ? printf("Tabela nao encontrada. Encerrando operacao.\n") : printf("Tabela removida.\n");
+  existe_tabela == 0 ? printf("\nTabela nao encontrada. Encerrando operacao.\n") : printf("Tabela removida.\n");
 //// FIM - DELETAR TABELA////
 }

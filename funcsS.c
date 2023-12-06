@@ -75,7 +75,7 @@ int reconhecer_numero_inteiro(int* numero)
     if (scanf("%i", numero) != 1) 
     {
         while ((limpador = getchar()) != '\n' && limpador != EOF);
-        printf("\rERRO, numero invalido, digite um numero inteiro!\n");
+        printf("\r\nERRO, numero invalido, digite um numero inteiro!\n");
         return 0;
     }
 
@@ -84,7 +84,8 @@ int reconhecer_numero_inteiro(int* numero)
     {
         if (!isspace(limpador)) // Verifica se não é um espaço em branco
         { 
-            printf("\rERRO, numero invalido, digite um numero inteiro!\n");
+            while ((limpador = getchar()) != '\n' && limpador != EOF);
+            printf("\r\nERRO, numero invalido, digite um numero inteiro!\n");
             return 0;
         }
     }
