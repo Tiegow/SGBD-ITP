@@ -8,7 +8,7 @@ typedef struct linha_de_matriz
 void criar_tabela(void);
 void listar_tabelas(void);
 void criar_nova_linha(void);
-void listar_dados_tabela(void);
+void listar_dados_tabela(char nome_tabela[]);
 void deletar_linha_tabela(void);
 void deletar_tabela(void);
 

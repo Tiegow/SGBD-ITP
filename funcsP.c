@@ -208,20 +208,21 @@ void criar_nova_linha(void)
   atualizando_qtd_de_linhas_colunas(nome_tabela, qtd_linhas, qtd_linhas_anteriores, qtd_colunas);
 }
 
-void listar_dados_tabela(void)
+void listar_dados_tabela(char nome_tabela[])
 {
-  listar_tabelas();
-  char nome_tabela[55];
-  printf("Mostrar dados da tabela: ");
-  fgets(nome_tabela, 51, stdin);
+  //listar_tabelas();
+  //char nome_tabela[55];
+  //printf("Mostrar dados da tabela: ");
+  //fgets(nome_tabela, 51, stdin);
   printf("\e[1;1H\e[2J");
   nome_tabela[strcspn(nome_tabela, "\n")] = 0;
+  printf(">>> %s <<<\n", nome_tabela);
   strcat(nome_tabela,".txt");
 
   FILE *tabela = fopen(nome_tabela,"r");
   if (tabela == NULL)
   {
-    printf("\nNenhuma tabela encontrada.\n");
+    printf("\nTabela nao encontrada.\n");
     return;
   }
 
@@ -232,7 +233,6 @@ void listar_dados_tabela(void)
   linha_de_matriz nova_matriz[qtd_linhas]; //Declarando uma matriz com a quantidade de linhas da tabela escolhida
   reconhecer_tabela(tabela, qtd_linhas, qtd_colunas, nova_matriz); 
 
-  printf("\n");
   for(int i = 0; i < qtd_linhas; i++)
   {
     for(int j = 0; j < qtd_colunas; j++)
@@ -253,14 +253,11 @@ void deletar_linha_tabela(void)
 
   char nome_tabela_alvo[55];
   int chave;
-  printf("=== APAGANDO REGISTRO ===\n");
+  printf("=== APAGANDO LINHA ===\n");
   printf("Nome da tabela: ");
   fgets(nome_tabela_alvo, 51, stdin);
-  printf("Chave primaria: ");
-  if(reconhecer_numero_inteiro(&chave) == 0) return; /// Testa se é um número inteiro
-  
-  nome_tabela_alvo[strcspn(nome_tabela_alvo, "\n")] = 0; //Eliminando '\n' no fim da string
-  strcat(nome_tabela_alvo,".txt"); //Adicionando extensão '.txt' para encontrar o arquivo
+
+  listar_dados_tabela(nome_tabela_alvo);
 
   FILE *tabela_entrada = fopen(nome_tabela_alvo,"r"); //Abrindo arquivo da tabela alvo
   if (tabela_entrada == NULL)
@@ -268,6 +265,10 @@ void deletar_linha_tabela(void)
     printf("\nTabela nao encontrada.\n");
     return;
   }
+
+  printf("\nApagar da chave primaria: ");
+  if(reconhecer_numero_inteiro(&chave) == 0) return; /// Testa se é um número inteiro
+  
   FILE *tabela_saida;
 
   int qtd_linhas, qtd_colunas;
@@ -316,6 +317,8 @@ void deletar_linha_tabela(void)
 
   remove(nome_tabela_alvo); //Excluindo tabela original
   rename("novatabela.txt",nome_tabela_alvo); //Renomeando a nova tabela para o nome original
+
+  printf("\nLinha removida.\n");
 //// FIM - DELETAR LINHA////
 }
 

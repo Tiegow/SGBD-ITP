@@ -38,7 +38,11 @@ int main(void)
       criar_nova_linha();
       break;
     case 4:
-      listar_dados_tabela();
+      listar_tabelas();
+      printf("Mostrar dados da tabela: ");
+      char nome_tabela[55];
+      fgets(nome_tabela, 51, stdin);
+      listar_dados_tabela(nome_tabela);
       break;
     case 6:
       deletar_linha_tabela();
