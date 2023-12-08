@@ -143,6 +143,22 @@ void criar_nova_linha(void)
   /// COLETANDO QUANTIDADE DE COLUNAS E LINHAS///
   int qtd_colunas, qtd_linhas_anteriores;
   fscanf(arquivo_tabela1, "%i %i\n", &qtd_linhas_anteriores, &qtd_colunas);
+  
+  //PEGANDO OS NOMES DAS COLUNAS//
+
+  linha_de_matriz tabela_matriz[qtd_linhas_anteriores];
+  char nomes_colunas[qtd_colunas][21];
+  reconhecer_tabela(arquivo_tabela1,qtd_linhas_anteriores + 1,qtd_colunas,tabela_matriz);
+  
+  for(int c = 0; c < qtd_colunas; c++)
+  {
+    strcpy(nomes_colunas[c], tabela_matriz[0].coluna[c]);
+  }
+
+  free(tabela_matriz);
+
+  ////////////////////////////////
+  
   fclose(arquivo_tabela1);
 
   /// ADCIONANDO INFORMAÇÕES EM UMA NOVA LINHA ///
@@ -162,7 +178,7 @@ void criar_nova_linha(void)
     {
       if(i == 0) 
       {
-        printf("Chave primaria (coluna 1): ");
+        printf("Coluna %s (chave primaria): ", nomes_colunas[0]);
         if(reconhecer_numero_inteiro(&(chave_primaria[j])) == 0) /// Testa se é um número inteiro
         {
           fclose(arquivo_tabela2);
@@ -196,7 +212,7 @@ void criar_nova_linha(void)
       }
       else
       {
-        printf("Coluna %i: ", i+1);
+        printf("Coluna %s: ", nomes_colunas[i]);
         fgets(info_coluna, 29, stdin);
         info_coluna[strcspn(info_coluna, "\n")] = 0;
         fprintf(arquivo_tabela2, "%s|", info_coluna);
@@ -210,10 +226,6 @@ void criar_nova_linha(void)
 
 void listar_dados_tabela(char nome_tabela[])
 {
-  //listar_tabelas();
-  //char nome_tabela[55];
-  //printf("Mostrar dados da tabela: ");
-  //fgets(nome_tabela, 51, stdin);
   printf("\e[1;1H\e[2J");
   nome_tabela[strcspn(nome_tabela, "\n")] = 0;
   printf(">>> %s <<<\n", nome_tabela);
