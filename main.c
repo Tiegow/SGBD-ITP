@@ -8,6 +8,7 @@ int main(void)
 {
   int operacao = 42;
 
+  printf("=== SGBD ITP ===");
   while(operacao != 0)
   {
     printf("\nOperacoes:\n");
@@ -15,6 +16,7 @@ int main(void)
     printf("| Listar tabelas (2)\n");
     printf("| Criar nova linha em uma tabela (3)\n");
     printf("| Listar todos os dados de uma tabela (4)\n");
+    printf("| Pesquisar valores em coluna (5)\n");
     printf("| Apagar uma linha (6)\n");
     printf("| Excluir uma tabela (7)\n");
     printf("| Encerrar (0)\n");
@@ -43,6 +45,9 @@ int main(void)
       char nome_tabela[55];
       fgets(nome_tabela, 51, stdin);
       listar_dados_tabela(nome_tabela);
+      break;
+    case 5:
+      pesquisar();
       break;
     case 6:
       deletar_linha_tabela();

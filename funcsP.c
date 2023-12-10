@@ -82,8 +82,8 @@ void listar_tabelas(void)
     return;
   }
   
-  char linha[200];
-  if(fgets(linha, 200, lista) == NULL)
+  char linha[151];
+  if(fgets(linha, 150, lista) == NULL)
   {
     printf("\nNehuma tabela encontrada.\n");
     fclose(lista);
@@ -92,7 +92,7 @@ void listar_tabelas(void)
   {
     printf("\n=== Tabelas criadas ===\n");
     printf("%s", linha);
-    while (fgets(linha, 200, lista) != NULL)
+    while (fgets(linha, 150, lista) != NULL)
     {
       printf("%s", linha);
     }
@@ -258,6 +258,258 @@ void listar_dados_tabela(char nome_tabela[])
   fclose(tabela); //Fim da operação
 }
 
+void pesquisar(void)
+{
+  printf("\e[1;1H\e[2J");
+  listar_tabelas();
+
+  char nome_tabela_alvo[55];
+  printf("=== PESQUISANDO VALOR ===\n");
+  printf("Nome da tabela: ");
+  fgets(nome_tabela_alvo, 51, stdin);
+  nome_tabela_alvo[strcspn(nome_tabela_alvo, "\n")] = 0;
+  strcat(nome_tabela_alvo,".txt");
+
+  FILE *tabela_pesquisa = fopen(nome_tabela_alvo,"r"); //Abrindo arquivo da tabela alvo
+  if (tabela_pesquisa == NULL)
+  {
+    printf("\nTabela nao encontrada.\n");
+    return;
+  }
+
+  // Fornecendo as colunas //
+  int qtd_linhas, qtd_colunas;
+  fscanf(tabela_pesquisa,"%d %d\n", &qtd_linhas, &qtd_colunas);
+  qtd_linhas++;
+
+  linha_de_matriz tabela_matriz[qtd_linhas];
+  reconhecer_tabela(tabela_pesquisa, qtd_linhas, qtd_colunas, tabela_matriz);
+
+  printf("Selecione uma das colunas para pesquisar:\n\n");
+  for(int j = 0; j < qtd_colunas; j++)
+  {
+    printf("%s|", tabela_matriz[0].coluna[j]);
+  }
+  printf("\n");
+  ///////////////////////////
+
+  // Identificando a coluna desejada //
+  char nome_coluna_alvo[21];
+  int posicao_coluna_alvo;
+
+  printf("\nColuna: ");
+  fgets(nome_coluna_alvo,20,stdin);
+  nome_coluna_alvo[strcspn(nome_coluna_alvo, "\n")] = 0;
+  int encontrou = 0;
+
+  for(int j = 0; j < qtd_colunas; j++)
+  {
+    if(strcmp(nome_coluna_alvo,tabela_matriz[0].coluna[j]) == 0)
+    {
+      posicao_coluna_alvo = j;
+      encontrou = 1;
+    }else if(j == qtd_colunas && encontrou == 0)
+    {
+      printf("Coluna nao encontrada ou inexistente\n");
+      return;
+    }
+  }
+  /////////////////////////////////////
+
+  // (Tentando) Identificar a "natureza" da coluna //
+  int tipo_numero;
+  double teste;
+  char *endptr;
+
+  int qtd_numeros = qtd_linhas-1;
+  double coluna_de_numeros[qtd_numeros];
+
+  teste = strtod(tabela_matriz[1].coluna[posicao_coluna_alvo], &endptr); //Testa se a string pode ser um numero (double)
+
+  if(teste == 0)
+  {
+    tipo_numero = 0;
+  } 
+  else
+  {
+    int j = 0;
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      teste = strtod(tabela_matriz[i].coluna[posicao_coluna_alvo], &endptr);
+      coluna_de_numeros[j] = teste;
+      j++;
+    }
+    tipo_numero = 1;
+  }
+  ///////////////////////////////////////////////////
+
+  int opcao;
+  printf(">>> Opcoes de pesquisa:\n");
+  printf("1 - valores maiores que o valor informado\n");
+  printf("2 - valores maiores ou iguais ao valor informado\n");
+  printf("3 - valores iguais ao valor informado\n");
+  printf("4 - valores menores que o valor informado\n");
+  printf("5 - valores menores ou iguais ao valor informado\n");
+  printf("6 - valores proximos ao informado (nomes)\n");
+  printf("\nValor para pesquisar: ");
+
+  if(tipo_numero) //TRABALHANDO COM NUMEROS
+  {
+    double valor_numero_pesquisa;
+    scanf("%lf", &valor_numero_pesquisa);
+    printf("Opcao de pesquisa: ");
+    scanf("%d", &opcao);
+
+    switch (opcao)
+    {
+    case 1:
+      printf("\n>>> Valores em %s maiores que %.2lf:\n", nome_coluna_alvo, valor_numero_pesquisa);
+      for(int i = 0; i<qtd_numeros; i++)
+      {
+        if(coluna_de_numeros[i] > valor_numero_pesquisa)
+        {
+          printf("%s;\n", tabela_matriz[i+1].coluna[posicao_coluna_alvo]);
+        }
+      }
+      break;
+    
+    case 2:
+    printf("\n>>> Valores em %s maiores ou iguais a %.2lf:\n", nome_coluna_alvo, valor_numero_pesquisa);
+    for(int i = 0; i<qtd_numeros; i++)
+    {
+      if(coluna_de_numeros[i] >= valor_numero_pesquisa)
+      {
+        printf("%s;\n", tabela_matriz[i+1].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 3:
+    printf("\n>>> Valores em %s iguais a %.2lf:\n", nome_coluna_alvo, valor_numero_pesquisa);
+    for(int i = 0; i<qtd_numeros; i++)
+    {
+      if(coluna_de_numeros[i] == valor_numero_pesquisa)
+      {
+        printf("%s;\n", tabela_matriz[i+1].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 4:
+    printf("\n>>> Valores em %s menores que %.2lf:\n", nome_coluna_alvo, valor_numero_pesquisa);
+    for(int i = 0; i<qtd_numeros; i++)
+    {
+      if(coluna_de_numeros[i] < valor_numero_pesquisa)
+      {
+        printf("%s;\n", tabela_matriz[i+1].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 5:
+    printf("\n>>> Valores em %s menores ou iguais a %.2lf:\n", nome_coluna_alvo, valor_numero_pesquisa);
+    for(int i = 0; i<qtd_numeros; i++)
+    {
+      if(coluna_de_numeros[i] <= valor_numero_pesquisa)
+      {
+        printf("%s;\n", tabela_matriz[i+1].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+    
+    default:
+      printf("Opcao invalida.\n");
+      break;
+    }
+  } 
+  else //TRABALHANDO COM STRINGS
+  {
+    char valor_palavra_pesquisa[30];
+    fgets(valor_palavra_pesquisa,29,stdin);
+    valor_palavra_pesquisa[strcspn(valor_palavra_pesquisa, "\n")] = 0;
+    printf("Opcao de pesquisa: ");
+    scanf("%d", &opcao);
+
+    switch (opcao)
+    {
+    case 1:
+      printf("\n>>> Valores em %s maiores que %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+      for(int i = 1; i < qtd_linhas; i++)
+      {
+        if(strcmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa) > 0)
+        {
+          printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+        }
+      }
+      break;
+    
+    case 2:
+    printf("\n>>> Valores em %s maiores ou iguais a %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      if(strcmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa) >= 0)
+      {
+        printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 3:
+    printf("\n>>> Valores em %s iguais a %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      if(strcmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa) == 0)
+      {
+        printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 4:
+    printf("\n>>> Valores em %s menores que %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      if(strcmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa) < 0)
+      {
+        printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 5:
+    printf("\n>>> Valores em %s menores ou iguais a %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      if(strcmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa) <= 0)
+      {
+        printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+
+    case 6:
+    printf("\n>>> Valores em %s proximos a %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
+    int proximidade = strlen(valor_palavra_pesquisa)/2; //Compara ate a metade da string
+
+    for(int i = 1; i < qtd_linhas; i++)
+    {
+      if(strncmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa,proximidade) == 0)
+      {
+        printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
+      }
+    }
+    break;
+    
+    default:
+      printf("Opcao invalida.\n");
+      break;
+    }
+  }
+
+  free(tabela_matriz);
+  fclose(tabela_pesquisa);
+}
+
 void deletar_linha_tabela(void)
 {
   printf("\e[1;1H\e[2J");
@@ -358,9 +610,9 @@ void deletar_tabela(void)
   fgets(nome_apagar, 51, stdin);
 
 //// APAGANDO DA LISTA DE TABELAS ////
-  char linha[200];
+  char linha[151];
   int existe_tabela = 0;
-  while (fgets(linha, 200, arqivo_entrada) != NULL)
+  while (fgets(linha, 150, arqivo_entrada) != NULL)
   {
     if(strcmp(linha,nome_apagar) != 0)
     {
