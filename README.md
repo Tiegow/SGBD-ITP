@@ -12,3 +12,19 @@ Crie uma pasta para guardar o arquivo final.exe junto das tabelas. É possível 
 
 Executando o programa você deve se deparar com a interface inicial do SGBD ITP, que apresenta as sete operações principais disponíveis durante a execução. Na interface principal, o usuário deve inserir o número correspondente a operação que quer executar (1 a 7, e 0 para encerrar)
 - ## Criar Tabela
+  O programa pedirá que o usuário nomeie a nova tabela, em seguida, solicitará a quantidade de colunas que a tabela deve ter. A partir desse ponto, se o usuário forneceu as informações necessárias corretamente, o arquivo de texto "tabelas.txt" é criado. Esse arquivo apenas lista as tabelas já criadas.
+  
+  ```
+  //// LISTANDO NOVA TABELA CRIADA ////
+  
+  FILE *lista_tabelas;
+  lista_tabelas = fopen("tabelas.txt","a");
+  if(lista_tabelas == NULL)
+  {
+    printf("\nErro ao abrir arquivo.\n");
+    return;
+  }
+
+  fprintf(lista_tabelas, "%s\n", nome_tabela); //Registrando o nome da nova tabela
+  fclose(lista_tabelas);
+  ```
