@@ -22,7 +22,7 @@ int main(void)
     printf("| Encerrar (0)\n");
     printf("\nOperacao: ");
 
-    if(reconhecer_numero_inteiro(&operacao) == 0){operacao = 42;} /// Testa se é um número inteiro
+    if(reconhecer_numero_inteiro(&operacao) == 0) operacao = 42; /// Testa se é um número inteiro
 
     switch (operacao)
     {

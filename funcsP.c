@@ -300,17 +300,30 @@ void pesquisar(void)
   printf("\nColuna: ");
   fgets(nome_coluna_alvo,20,stdin);
   nome_coluna_alvo[strcspn(nome_coluna_alvo, "\n")] = 0;
+  string_para_maisculo(nome_coluna_alvo);
   int encontrou = 0;
+  
+  // Cancela a operação caso a tabela não possua linhas 
+  if(qtd_linhas == 1)
+  {
+    printf("\nEssa tabela nao possui dados para pesquisar!\n");
+    free(tabela_matriz);
+    fclose(tabela_pesquisa);
+    return;
+  }
 
   for(int j = 0; j < qtd_colunas; j++)
   {
-    if(strcmp(nome_coluna_alvo,tabela_matriz[0].coluna[j]) == 0)
+    string_para_maisculo(tabela_matriz[0].coluna[j]);
+    if(strcmp(nome_coluna_alvo, tabela_matriz[0].coluna[j]) == 0)
     {
       posicao_coluna_alvo = j;
       encontrou = 1;
-    }else if(j == qtd_colunas && encontrou == 0)
+    }else if(j == qtd_colunas - 1 && encontrou == 0)
     {
-      printf("Coluna nao encontrada ou inexistente\n");
+      printf("\nColuna nao encontrada ou inexistente.\n");
+      free(tabela_matriz);
+      fclose(tabela_pesquisa);
       return;
     }
   }
@@ -356,9 +369,21 @@ void pesquisar(void)
   if(tipo_numero) //TRABALHANDO COM NUMEROS
   {
     double valor_numero_pesquisa;
-    scanf("%lf", &valor_numero_pesquisa);
+    if(reconhecer_numero_double(&valor_numero_pesquisa) == 0) 
+    {
+      printf("\r\nERRO, foi selecionada uma coluna de numeros, digite um numero!\n");
+      free(tabela_matriz);
+      fclose(tabela_pesquisa);
+      return;
+    }
     printf("Opcao de pesquisa: ");
-    scanf("%d", &opcao);
+    if(reconhecer_numero_inteiro(&opcao) == 0)  /// Testa se é um número inteiro
+    {
+      printf("Opcao invalida.\n");
+      free(tabela_matriz);
+      fclose(tabela_pesquisa);
+      return;
+    }
 
     switch (opcao)
     {
@@ -428,7 +453,13 @@ void pesquisar(void)
     fgets(valor_palavra_pesquisa,29,stdin);
     valor_palavra_pesquisa[strcspn(valor_palavra_pesquisa, "\n")] = 0;
     printf("Opcao de pesquisa: ");
-    scanf("%d", &opcao);
+    if(reconhecer_numero_inteiro(&opcao) == 0)  /// Testa se é um número inteiro
+    {
+      printf("Opcao invalida.\n");
+      free(tabela_matriz);
+      fclose(tabela_pesquisa);
+      return;
+    }
 
     switch (opcao)
     {
@@ -589,8 +620,8 @@ void deletar_linha_tabela(void)
 void deletar_tabela(void)
 {
   printf("\e[1;1H\e[2J");
-  FILE *arqivo_entrada = fopen("tabelas.txt","r"); //Abrindo arquivo da lista de tabelas
-  if (arqivo_entrada == NULL)
+  FILE *arquivo_entrada = fopen("tabelas.txt","r"); //Abrindo arquivo da lista de tabelas
+  if (arquivo_entrada == NULL)
   {
     printf("\nNenhuma tabela encontrada.\n");
     return;
@@ -608,21 +639,26 @@ void deletar_tabela(void)
   printf("Nome da tabela: ");
 
   fgets(nome_apagar, 51, stdin);
+  string_para_maisculo(nome_apagar);
 
 //// APAGANDO DA LISTA DE TABELAS ////
   char linha[151];
+  char linha_original[150];
   int existe_tabela = 0;
-  while (fgets(linha, 150, arqivo_entrada) != NULL)
+  while (fgets(linha, 150, arquivo_entrada) != NULL)
   {
+    strcpy(linha_original, linha);
+    string_para_maisculo(linha);
     if(strcmp(linha,nome_apagar) != 0)
     {
-      fputs(linha, arquivo_saida); //*COLOQUE O QUE NÃO FOR A TABELA DELETADA NO NOVO ARQUIVO*
-    }else
+      fputs(linha_original, arquivo_saida); //*COLOQUE O QUE NÃO FOR A TABELA DELETADA NO NOVO ARQUIVO*
+    }
+    else
     {
       existe_tabela = 1;
     }
   }
-  fclose(arqivo_entrada);
+  fclose(arquivo_entrada);
   fclose(arquivo_saida);
 
   remove("tabelas.txt"); //Excluindo lista original

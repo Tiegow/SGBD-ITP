@@ -92,3 +92,37 @@ int reconhecer_numero_inteiro(int* numero)
 
     return 1;
 }
+
+int reconhecer_numero_double(double* numero) 
+{
+    int limpador;
+
+    if (scanf("%lf", numero) != 1) 
+    {
+        while ((limpador = getchar()) != '\n' && limpador != EOF);
+        return 0;
+    }
+
+    // Verifica se há mais caracteres no buffer após a leitura do número inteiro
+    while ((limpador = getchar()) != '\n' && limpador != EOF)
+    {
+        if (!isspace(limpador)) // Verifica se não é um espaço em branco
+        { 
+            while ((limpador = getchar()) != '\n' && limpador != EOF);
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void string_para_maisculo(char* nome)
+{
+    int i = 0;
+    while (nome[i]) 
+    {
+        nome[i] = toupper(nome[i]);
+        i++;
+    }
+}
+
