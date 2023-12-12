@@ -36,7 +36,7 @@ void criar_tabela(void)
   }
 //// LISTANDO NOVA TABELA CRIADA ////
   FILE *lista_tabelas;
-  lista_tabelas = fopen("tabelas.txt","a");
+  lista_tabelas = fopen("tabelas.txt","a"); 
   if(lista_tabelas == NULL)
   {
     printf("\nErro ao abrir arquivo.\n");
@@ -83,7 +83,8 @@ void listar_tabelas(void)
   }
   
   char linha[151];
-  if(fgets(linha, 150, lista) == NULL)
+  /// Lendo a lista de tabelas ///
+  if(fgets(linha, 150, lista) == NULL) //Se não houver nada na primeira linha, informa que não existem tabelas
   {
     printf("\nNehuma tabela encontrada.\n");
     fclose(lista);
@@ -92,7 +93,7 @@ void listar_tabelas(void)
   {
     printf("\n=== Tabelas criadas ===\n");
     printf("%s", linha);
-    while (fgets(linha, 150, lista) != NULL)
+    while (fgets(linha, 150, lista) != NULL) //Apresenta todas as linhas com os nomes das tabelas
     {
       printf("%s", linha);
     }
@@ -140,12 +141,11 @@ void criar_nova_linha(void)
     return;
   }
 
-  /// COLETANDO QUANTIDADE DE COLUNAS E LINHAS///
+  /// COLETANDO QUANTIDADE DE COLUNAS E LINHAS ///
   int qtd_colunas, qtd_linhas_anteriores;
   fscanf(arquivo_tabela1, "%i %i\n", &qtd_linhas_anteriores, &qtd_colunas);
   
-  //PEGANDO OS NOMES DAS COLUNAS//
-
+  /// RECONHECENDO OS NOMES DAS COLUNAS ///
   linha_de_matriz tabela_matriz[qtd_linhas_anteriores];
   char nomes_colunas[qtd_colunas][21];
   reconhecer_tabela(arquivo_tabela1,qtd_linhas_anteriores + 1,qtd_colunas,tabela_matriz);
@@ -156,9 +156,6 @@ void criar_nova_linha(void)
   }
 
   free(tabela_matriz);
-
-  ////////////////////////////////
-  
   fclose(arquivo_tabela1);
 
   /// ADCIONANDO INFORMAÇÕES EM UMA NOVA LINHA ///
@@ -167,6 +164,7 @@ void criar_nova_linha(void)
   if(arquivo_tabela2 == NULL)
   {
     printf("\nErro ao abrir arquivo.\n");
+    return;
   }
 
   char info_coluna[30];
@@ -176,7 +174,7 @@ void criar_nova_linha(void)
   {
     for(int i = 0; i < qtd_colunas; i++)
     {
-      if(i == 0) 
+      if(i == 0) //Se for a primeira coluna (chave primária)
       {
         printf("Coluna %s (chave primaria): ", nomes_colunas[0]);
         if(reconhecer_numero_inteiro(&(chave_primaria[j])) == 0) /// Testa se é um número inteiro
@@ -210,7 +208,7 @@ void criar_nova_linha(void)
         fprintf(arquivo_tabela2, "\n");
         fprintf(arquivo_tabela2, "%i|", chave_primaria[j]);
       }
-      else
+      else //Se não for a chave primária
       {
         printf("Coluna %s: ", nomes_colunas[i]);
         fgets(info_coluna, 29, stdin);
@@ -249,7 +247,7 @@ void listar_dados_tabela(char nome_tabela[])
   {
     for(int j = 0; j < qtd_colunas; j++)
     {
-      printf("%s|", nova_matriz[i].coluna[j]);
+      printf("%s|", nova_matriz[i].coluna[j]); //Apresenta o dado em string de cada coluna
     }
   }
   printf("\n");
@@ -301,6 +299,7 @@ void pesquisar(void)
   fgets(nome_coluna_alvo,20,stdin);
   nome_coluna_alvo[strcspn(nome_coluna_alvo, "\n")] = 0;
   string_para_maisculo(nome_coluna_alvo);
+
   int encontrou = 0;
   
   // Cancela a operação caso a tabela não possua linhas 
@@ -331,22 +330,22 @@ void pesquisar(void)
 
   // (Tentando) Identificar a "natureza" da coluna //
   int tipo_numero;
-  double teste;
+  double teste; //Numero retornado na strtod
   char *endptr;
 
   int qtd_numeros = qtd_linhas-1;
-  double coluna_de_numeros[qtd_numeros];
+  double coluna_de_numeros[qtd_numeros]; //Vetor de numeros double
 
   teste = strtod(tabela_matriz[1].coluna[posicao_coluna_alvo], &endptr); //Testa se a string pode ser um numero (double)
 
   if(teste == 0)
   {
-    tipo_numero = 0;
+    tipo_numero = 0; //A coluna não é de numeros
   } 
   else
   {
     int j = 0;
-    for(int i = 1; i < qtd_linhas; i++)
+    for(int i = 1; i < qtd_linhas; i++) //Atribuindo os numeros da coluna ao vetor de numeros
     {
       teste = strtod(tabela_matriz[i].coluna[posicao_coluna_alvo], &endptr);
       coluna_de_numeros[j] = teste;
@@ -520,11 +519,11 @@ void pesquisar(void)
 
     case 6:
     printf("\n>>> Valores em %s proximos a %s:\n", nome_coluna_alvo, valor_palavra_pesquisa);
-    int proximidade = strlen(valor_palavra_pesquisa)/2; //Compara ate a metade da string
+    int proximidade = strlen(valor_palavra_pesquisa)/2; //A proximidade é a metade do tamanho da string
 
     for(int i = 1; i < qtd_linhas; i++)
     {
-      if(strncmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa,proximidade) == 0)
+      if(strncmp(tabela_matriz[i].coluna[posicao_coluna_alvo],valor_palavra_pesquisa,proximidade) == 0) //Compara strings até a metade
       {
         printf("%s;\n", tabela_matriz[i].coluna[posicao_coluna_alvo]);
       }
