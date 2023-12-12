@@ -582,7 +582,7 @@ void deletar_linha_tabela(void)
         printf("\nErro ao abrir arquivo.\n");
         return;
       }
-      fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas);
+      fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas); //Atualizando a quantidade de linhas
       break;
     }else
     {
@@ -593,12 +593,11 @@ void deletar_linha_tabela(void)
       }
     }
   }
-  //fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas);
   for(int i = 0; i < qtd_linhas; i++)
   {
     for(int j = 0; j < qtd_colunas; j++)
     {
-      if(atoi(matriz_entrada[i].coluna[0]) != chave)
+      if(atoi(matriz_entrada[i].coluna[0]) != chave) //Escreve as linhas da tabela original, exceto a linha excluida
       {
         fprintf(tabela_saida,"%s|", matriz_entrada[i].coluna[j]);
       }
