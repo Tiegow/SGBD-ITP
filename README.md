@@ -187,3 +187,83 @@ Executando o programa você deve se deparar com a interface inicial do SGBD ITP,
   }
   ```
   Com isso, o programa sabe se deve fazer pesquisas de numeros, usando operadores relacionais numericos (<, >, ==, etc.) ou usando comparação de strings (strcmp).
+- ## Deletar uma linha na tabela
+  Nessa operação, o usuário verá todos os dados da tabela selecionada na interface e deve digitar o numero da chave primária da linha que deseja excluir. O que a função faz é criar uma cópia da tabela, porém sem a linha excluida:
+  ```
+  FILE *tabela_saida;
+
+  int qtd_linhas, qtd_colunas;
+  fscanf(tabela_entrada,"%d %d\n", &qtd_linhas, &qtd_colunas);
+  qtd_linhas++;
+
+  linha_de_matriz matriz_entrada[qtd_linhas];
+  reconhecer_tabela(tabela_entrada, qtd_linhas, qtd_colunas, matriz_entrada); 
+
+  for(int i = 0; i < qtd_linhas; i++) //Verifica se a chave primaria realmente existe para remove-la
+  {
+    if(atoi(matriz_entrada[i].coluna[0]) == chave)
+    {
+      tabela_saida = fopen("novatabela.txt","w"); //Criando nova tabela (sem a linha a ser deletada)
+      if (tabela_saida == NULL)
+      {
+        printf("\nErro ao abrir arquivo.\n");
+        return;
+      }
+      fprintf(tabela_saida,"%d %d\n", qtd_linhas-2, qtd_colunas); //Atualizando a quantidade de linhas
+      break;
+    }else
+    {
+      if(i == qtd_linhas-1)
+      {
+        printf("\nEssa linha nao existe ou nao foi encontrada.\n");
+        return;
+      }
+    }
+  }
+  ```
+  Depois de criada a cópia, as linhas são adicionadas:
+  ```
+  for(int i = 0; i < qtd_linhas; i++)
+    {
+      for(int j = 0; j < qtd_colunas; j++)
+      {
+        if(atoi(matriz_entrada[i].coluna[0]) != chave) //Escreve as linhas da tabela original, exceto a linha excluida
+        {
+          fprintf(tabela_saida,"%s|", matriz_entrada[i].coluna[j]);
+        }
+      }
+    }
+  ```
+  A tabela original é removida, e a cópia atualizada é renomeada para o mesmo nome da original:
+  ```
+  remove(nome_tabela_alvo); //Excluindo tabela original
+  rename("novatabela.txt",nome_tabela_alvo); //Renomeando a nova tabela para o nome original
+  ```
+- ## Deletar uma tabela
+  Primeiramente, essa operação cria uma cópia atualizada da lista de tabelas (tabelas.txt), sem o nome da tabela alvo, um processo parecido com o de excluir linha:
+  ```
+  //// APAGANDO DA LISTA DE TABELAS ////
+  char linha[151];
+  char linha_original[150];
+  int existe_tabela = 0;
+  while (fgets(linha, 150, arquivo_entrada) != NULL)
+  {
+    strcpy(linha_original, linha);
+    string_para_maisculo(linha);
+    if(strcmp(linha,nome_apagar) != 0)
+    {
+      fputs(linha_original, arquivo_saida); //*COLOQUE O QUE NÃO FOR A TABELA DELETADA NO NOVO ARQUIVO*
+    }
+    else
+    {
+      existe_tabela = 1;
+    }
+  }
+  fclose(arquivo_entrada);
+  fclose(arquivo_saida);
+
+  remove("tabelas.txt"); //Excluindo lista original
+  rename("outlist.txt", "tabelas.txt"); //Renomeando a nova lista para o nome padrão
+  ```
+  Por fim, o arquivo de texto da tabela alvo é removido.
+  
