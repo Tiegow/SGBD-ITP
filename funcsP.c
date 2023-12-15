@@ -168,7 +168,7 @@ void criar_nova_linha(void)
   }
 
   char info_coluna[30];
-  int chave_primaria[qtd_linhas];
+  int chave_primaria[qtd_linhas], limpador;
   
   for(int j = 0; j < qtd_linhas; j++)
   {
@@ -211,10 +211,24 @@ void criar_nova_linha(void)
       else //Se não for a chave primária
       {
         printf("Coluna %s: ", nomes_colunas[i]);
-        fgets(info_coluna, 29, stdin);
-        info_coluna[strcspn(info_coluna, "\n")] = 0;
+  
+        if (fgets(info_coluna, sizeof(info_coluna), stdin)) 
+        {
+          // Verifica se o último caractere não é uma quebra de linha
+          if (info_coluna[strlen(info_coluna) - 1] != '\n') 
+          {
+            int ch;
+            while ((ch = getchar()) != '\n' && ch != EOF); // Limpa o buffer de entrada
+          } 
+          else 
+          {
+            info_coluna[strcspn(info_coluna, "\n")] = '\0'; // Remove a quebra de linha, se presente
+          }
+        }
+
         fprintf(arquivo_tabela2, "%s|", info_coluna);
-      } 
+        info_coluna[strcspn(info_coluna, "\n")] = 0;
+      }
     }
   }
   fclose(arquivo_tabela2);

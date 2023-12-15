@@ -19,7 +19,7 @@ void reconhecer_tabela (FILE *arquivo, int qtd_linhas, int qtd_colunas, linha_de
     {
         for(int j = 0; j < qtd_colunas; j++)
         {
-            fscanf(arquivo,"%20[^|]",resultante[i].coluna[j]); //Lendo os dados string de cada campo (delimitados por |)
+            fscanf(arquivo,"%29[^|]",resultante[i].coluna[j]); //Lendo os dados string de cada campo (delimitados por |)
             fscanf(arquivo,"|"); 
         }
     }
